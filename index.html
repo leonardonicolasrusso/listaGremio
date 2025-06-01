@@ -81,7 +81,56 @@
   z-index: 10;
 }
 
-  
+ .filtro-oferta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #333;
+}
+
+.toggle-oferta {
+  width: 40px;
+  height: 20px;
+  background: #ccc;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.toggle-oferta::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: 0.2s;
+}
+.toggle-oferta.active {
+  background: #2ecc71;
+}
+.toggle-oferta.active::before {
+  transform: translateX(20px);
+}
+.oferta-label2 {
+  font-size: 16px;
+  vertical-align: middle;
+}
+.filtro-oferta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+ 
     
 
   </style>
@@ -103,10 +152,11 @@
   <option value="">Todas las categorías</option>
 </select>
   
-  <label style="display:block; margin: 10px auto; text-align: center; font-size: 15px;">
-  <input type="checkbox" id="ofertaFiltro" onchange="filtrarProductos()" />
-  Ver solo productos en oferta
-</label><br/>
+<div class="filtro-oferta">
+  <input type="checkbox" id="ofertaFiltro" onchange="filtrarProductos()" style="display:none;" />
+  <button id="btnOferta" onclick="toggleOferta()" class="toggle-oferta"></button>
+  <label for="btnOferta" class="oferta-label2">Ver solo productos en oferta</label>
+</div>
 
 
 
@@ -326,6 +376,8 @@ function filtrarProductos() {
   productGrid.innerHTML = "";
   let hayCoincidencias = false;
   products.forEach(product => {
+    if (soloOfertas && !product.oferta) return;
+
     if (
   product.name.toLowerCase().includes(texto) &&
   (categoriaSeleccionada === "" || product.category === categoriaSeleccionada) &&
@@ -403,6 +455,25 @@ window.addEventListener("scroll", function () {
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+  
+  let soloOfertas = false;
+
+function toggleOferta() {
+  soloOfertas = !soloOfertas;
+  const btn = document.getElementById("btnOferta");
+  btn.classList.toggle("activa", soloOfertas);
+  filtrarProductos();
+}
+  
+  function toggleOferta() {
+  const toggle = document.getElementById("btnOferta");
+  const checkbox = document.getElementById("ofertaFiltro");
+  checkbox.checked = !checkbox.checked;
+  toggle.classList.toggle("active");
+  filtrarProductos();
+}
+
+
 
 </script>
   <div id="toast" style="display:none; position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
