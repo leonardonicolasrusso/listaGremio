@@ -102,9 +102,19 @@
 <select id="categoriaFiltro" onchange="filtrarProductos()" style="display:block; margin: 0 auto 20px; padding: 10px; width: 90%; max-width: 400px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;">
   <option value="">Todas las categorías</option>
 </select>
+  
+  <label style="display:block; margin: 10px auto; text-align: center; font-size: 15px;">
+  <input type="checkbox" id="ofertaFiltro" onchange="filtrarProductos()" />
+  Ver solo productos en oferta
+</label><br/>
+
 
 
 <div class="grid" id="productGrid"></div>
+<p id="mensajeVacio" style="text-align:center; margin-top: 20px; font-size: 15px; color: #999; display: none;">
+  No existen productos en oferta para esta categoría.
+</p>
+
 
 <div class="cart" id="cart">
   <div class="cart-title">PEDIDO</div>
@@ -312,12 +322,15 @@ function vaciarCarrito() {
 function filtrarProductos() {
   const texto = document.getElementById("buscador").value.toLowerCase();
   const categoriaSeleccionada = document.getElementById("categoriaFiltro").value;
+  const soloOferta = document.getElementById("ofertaFiltro").checked;
   productGrid.innerHTML = "";
+  let hayCoincidencias = false;
   products.forEach(product => {
     if (
-      product.name.toLowerCase().includes(texto) &&
-      (categoriaSeleccionada === "" || product.category === categoriaSeleccionada)
-    ) {
+  product.name.toLowerCase().includes(texto) &&
+  (categoriaSeleccionada === "" || product.category === categoriaSeleccionada) &&
+  (!soloOferta || product.oferta)
+) {
       const card = document.createElement("div");
       card.className = "card";
 const fuegos = product.oferta ? "🔥🔥 " : "";
@@ -358,8 +371,12 @@ card.innerHTML = `
         inputQty.value = 1;
         mostrarToast(`${qty} unidad${qty > 1 ? 'es' : ''} de "${product.name}" agregada${qty > 1 ? 's' : ''} al carrito`);
       };
+      hayCoincidencias = true;
       productGrid.appendChild(card);
+      
     }
+    document.getElementById("mensajeVacio").style.display = hayCoincidencias ? "none" : "block";
+
   });
 }
 
